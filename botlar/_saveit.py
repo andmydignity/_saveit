@@ -11,6 +11,7 @@ username="_saveit",
 password="Ahmetse12",
 ratelimit_seconds=1200,
 )
+#TODO:Reply #1 ve Mesajı ayır,yorum kaldırılsa mesaj at.
 key = "TM9659kT1RReo022ha4pSWTwSOZ96o2jD0QEeC-WY7w="
 from cryptography.fernet import Fernet
 import requests as r
