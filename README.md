@@ -1,2 +1,2 @@
 # _saveit
-_Saveit 'in botları,backend ve frontend'i ve yardımcı scriptlerini içeren repo.
+Codes of u/_saveit and website which is used for downloading the videos

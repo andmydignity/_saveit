@@ -1,9 +1,10 @@
 import time
 import os
+#Cleans the downloaded files after 10-15mins.
 while True:
     one_minute_ago = time.time() - 600
     six_hr=time.time() - 10800
-    folder = '/home/ubuntu/website/files'
+    folder = '$PWD/files'
     os.chdir(folder)
     for somefile in os.listdir('.'):
         if somefile.endswith("_None.mp4"):

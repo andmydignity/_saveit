@@ -1,7 +1,8 @@
+#Changes the owner of files and permissions even though it's not needed.
 import time
 import os
 while True:
-    folder = '/home/ubuntu/website/files'
+    folder = '$PWD/files'
     os.chdir(folder)
     for somefile in os.listdir('.'):
         os.system("sudo chmod 777 {}".format(somefile))

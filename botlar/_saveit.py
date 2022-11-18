@@ -2,17 +2,19 @@
 import praw
 import re
 from time import sleep
+import os
+from dotenv import load_dotenv
+load_dotenv("bot.env")
+key=os.getenv("key")
 bekleme=1
 reddit = praw.Reddit(
-client_id="tFMaWlhwtIKUSjFGDtCwXg",
-client_secret="d5DhwvIlElddiw1wnGJe2rd0jPuTQQ",
+client_id=os.getenv("id"),
+client_secret=os.getenv("secret"),
 user_agent="<console:LOL:1.0>",
-username="_saveit",
-password="Ahmetse12",
+username=os.getenv("username"),
+password=os.getenv("password"),
 ratelimit_seconds=1200,
 )
-#TODO:Reply #1 ve Mesajı ayır,yorum kaldırılsa mesaj at.
-key = "TM9659kT1RReo022ha4pSWTwSOZ96o2jD0QEeC-WY7w="
 from cryptography.fernet import Fernet
 import requests as r
 from bs4 import BeautifulSoup as bs
@@ -40,42 +42,6 @@ def temizmi(s):
 
 while True:
     try:
-        #for z in reddit.inbox.comment_replies(limit=25):
-           # if z in yorum_ls:
-               # continue
-            #txt=z.body.lower()
-            #print(txt)
-            #if "good bot" in txt:
-               # z.reply("teşekkürler")
-               # d=True
-               # print("Cevap dönüldü")
-               # yorum_ls.append(z)
-            #if d==False:
-               # for f in sxtng:
-                  #  if f in txt:
-                      #  z.reply("hayır")
-                        #d=True
-                        #yorum_ls.append(z)
-                        #print("Cevap dönüldü")
-                        #break
-            #if d==False:
-               # for f in niye:
-                   # if f in txt:
-                       # cevap=sample(niye_c, 1)[0]
-                        #z.reply(cevap)
-                      #  d#=True
-                        #print("Cevap dönüldü")
-                        #yorum_ls.append(z)
-                        #break
-            #if d==False:
-               # cevap=sample(niye_c, 1)[0]
-                #z.reply(cevap)
-                #print("Cevap dönüldü")
-                #yorum_ls.append(z)
-           # txt=''
-            #kelime=[]
-            #d=False
-
         ls=[]
         for l in reddit.inbox.mentions(limit=10):
             if l in cevap_ls:
@@ -176,53 +142,3 @@ while True:
     if len(cevap_ls) > 100:
         for i in range(0,21):
             cevap_ls.pop(i) 
-    
-
-                
-        '''
-        for z in dön_ls:
-            if z.banned_by==None:
-                pass
-            else:
-                if z in ban_ls:
-                    pass
-                else:
-                    nu=dön_ls.index(z)
-                    y=cevap_ls[nu]
-                    kişi=kayıt_kişi[nu]
-                    p=kayıt_post[nu]
-                    sub=kayıt_sub[nu]
-                    post=y.submission
-                    main_url= main_url="https://reddit.com{}".format(post.permalink)
-                    url=quote_plus(main_url)
-                    resp=r.get("https://redditsave.com/info?url={}".format(url))
-                    html=resp.content
-                    soup=bs(html,"html.parser")
-                    lnks=soup.find_all("a",{"class":"downloadbutton"})
-                    if len(lnks)==0:
-                        continue
-                    elif len(lnks)==1:
-                        sonuç=lnks[0].get("href")
-                        if "https://" in sonuç:
-                            pass
-                        else:
-                            sonuç="https://redditsave.com{}".format(sonuç)
-                        dön=a_defter.reply("u/{} | {} | {}".format(kişi,p.sub)+"\n\n"+"#[İNDİR]({})".format(sonuç)+"\n\n"+"^(Resim indirmek istiyorsanız yeni sekmede Ctrl+S veya sağ click/uzun süre basktıktan sonra resmi farklı kaydet/resmi indir e basın)"+"\n\n"+"[Bağış](https://www.buymeacoffee.com/semihaslan)")
-                        print("Link düzgün dönüldü!")
-                        ban_ls.append(z)
-
-                    else:
-                        sonuç_hd=lnks[0].get("href")
-                        sonuç_sd=lnks[1].get("href")
-                        if "https://" in sonuç_hd:
-                            pass
-                        else:
-                            sonuç_hd="https://redditsave.com{}".format(sonuç_hd)
-                        if "https://" in sonuç_sd:
-                            pass
-                        else:
-                            sonuç_sd="https://redditsave.com{}".format(sonuç_sd)
-                        dön=a_.reply("u/{} | {} | {}".format(kişi,p.sub)+"\n\n"+"#[HD İNDİR]({})".format(sonuç_hd)+"\n\n"+"\n\n"+"#[SD İNDİR]({})".format(sonuç_sd)+"\n\n"+"^(Resim indirmek istiyorsanız yeni sekmede Ctrl+S veya sağ click/uzun süre basktıktan sonra resmi farklı kaydet/resmi indir e basın)"+"\n\n"+"[Bağış](https://www.buymeacoffee.com/semihaslan)")
-                        print("Link düzgün dönüldü!")
-                        ban_ls.append(z)
-                   '''

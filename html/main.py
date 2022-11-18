@@ -1,3 +1,4 @@
+#IMPORTANT:ONLY WORKS IN LINUX!
 import re
 from crypt import methods
 from fileinput import filename
@@ -12,8 +13,11 @@ import string
 from bs4 import BeautifulSoup as bs
 import requests as r
 from os.path import isfile
+from dotenv import load_dotenv
 
-key = "TM9659kT1RReo022ha4pSWTwSOZ96o2jD0QEeC-WY7w="
+load_dotenv("site.env")
+key=os.getenv("key")
+
 fernet = Fernet(key)
 site=Flask(__name__)
 def deEmojify(text):
@@ -24,7 +28,7 @@ def deEmojify(text):
         u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
                            "]+", flags = re.UNICODE)
     return regrex_pattern.sub(r'',text)
-def temizmi(s):
+def temizmi(s):#Does nothing?
     if ";" in s:
         return False
     elif "|" in s:
@@ -33,35 +37,20 @@ def temizmi(s):
         return False
     else:
         return True
-#HTML:Sayfa başına nav bar ekle.Ordan 'How to Use' tıklayınca sayfadaki ilgili bölümü göstersin mesela.✔
-#HTML:'Command' kısmında bir <code> eksik kalmış✔
-#HTML:Küçük düzeltmeler✔
-#HTML:Mobil versiyon yap (Responsive)✔
-#HTML:FAQ yaz✔
-#HTML:Contact yaz✔
-#HTML:Download page'den ana sayfasaya dönülebilsin.✔
-#HTML:404 ve hata sitesi✔
-#PY:Hız komudu çalışmıyor.✔
-#PY:RedGIFS desteği(Direk RedGIFS se yallah)
-#PY:Resim indirmede indirme başlamıyor(Valla banene)
-#PY:GIF te sıkıntı var.(Valla banane)
-#Bot:start ve end birlikte kullanıldığındaki uyumsuzluğu çöz✔
-#Bot:Komutlar için siteye yönlendir.✔
-#Bot ve PY:İndirilecek şeyin başına başlık koy.✔
 @site.route("/",methods=["GET","POST"])
 def ana():
     return render_template("main.html")
-@site.route("/d/<link>/<komut>/<quality>/",methods=["GET","POST"])
+@site.route("/d/<link>/<komut>/<quality>/",methods=["GET","POST"])#Old link system support.
 def indir(link,komut,quality):
     try:
         link=bytes(link,"utf-8")
         link=link[2:]
         link=fernet.decrypt(link).decode()
     except:
+        #Useless thing i left
         link=link.decode("utf-8")
         if temizmi(link)==False:
             link="Nice try buddy."
-        #Link temizlemesi yap komutlara karşın✔(Zaten korumalıymış)
     test=[]
     uz = 10
     has_audio=True
@@ -83,7 +72,9 @@ def indir(link,komut,quality):
     no_audio="ffmpeg -i files/{}.mp4 {} -c copy files/{}.mp4"
     speed="ffmpeg -i files/{}.mp4 -i files/{}.mp4 {} files/{}.mp4"
     speed_wa="ffmpeg -i files/{}.mp4 {} 'files/{}.mp4'"
+    #Check if it's a image/gif.
     if link.startswith("watch/")==True:
+        #TODO:Add #2 RedGIFS support
         link="https://www.redgifs.com/{}".format(link)
         return render_template("reggifs.html",l=link)
     if link.endswith(".gif")==True:
@@ -118,6 +109,7 @@ def indir(link,komut,quality):
                     else:
                         has_audio=False
                     print("{}/DASH_{}.mp4".format(link,i))
+                    #Create random strings to rename the files.
                     dw = ''.join(random.choices(string.ascii_letters+string.digits, k = uz))    
                     au = ''.join(random.choices(string.ascii_letters+string.digits, k = uz))
                     çk = ''.join(random.choices(string.ascii_letters+string.digits, k = uz))
@@ -159,6 +151,7 @@ def indir(link,komut,quality):
             return render_template("download.html",l="{}.mp4".format(çk))
 @site.route("/d/<link>/<komut>/<quality>/<title>/",methods=["GET","POST"])
 def indirt(link,komut,quality,title):
+    #Clean the title
     title=bytes(title,"utf-8")
     title=title[2:]
     title=fernet.decrypt(title).decode()
@@ -180,10 +173,10 @@ def indirt(link,komut,quality,title):
         link=link[2:]
         link=fernet.decrypt(link).decode()
     except:
+        #Useless
         link=link.decode("utf-8")
         if temizmi(link)==False:
             link="Nice try buddy."
-        #Link temizlemesi yap komutlara karşın✔(Zaten korumalıymış)
     test=[]
     uz = 10
     has_audio=True
@@ -202,7 +195,7 @@ def indirt(link,komut,quality,title):
             quality=quality[-1]
             test.append(quality)
     if quality=="None" and has_audio==True and komut=="" and isfile("files/{}_None.mp4".format(title))==True:
-        print("Zaten olan dosya gönderiliyor...")
+        print("Returning the same file...")
         try:
             return render_template("download.html",l="{}_None.mp4".format(title))
         except:
@@ -285,7 +278,7 @@ def indirt(link,komut,quality,title):
                     print("olmadı")
                     continue
             if dw==None:
-                return render_template("hata.html",id=link)
+                return render_template("hata.html",id=link)#Returns error
             else:
                 return render_template("download.html",l="{}.mp4".format(çk))
     else:  
@@ -374,28 +367,8 @@ def indirt(link,komut,quality,title):
                 return render_template("download.html",l="{}.mp4".format(çk))
 @site.route("/z/<file>",methods=["GET","POST"])
 def last(file):
-    path="/home/ubuntu/website/files/{}".format(file)
+    path="$PWD/files/{}".format(file)
     return send_file(path, as_attachment=True)
-    
-@site.route('/py', methods=['GET', 'POST'])
-def server():
-    if request.method == 'POST':
-        # Then get the data from the form
-        tag = request.form['tag']
-
-        # Get the username/password associated with this tag
-        user=tag
-
-        # Generate just a boring response
-        print(tag) 
-        # Or you could have a custom template for displaying the info
-        # return render_template('asset_information.html',
-        #                        username=user, 
-        #                        password=password)
-
-    # Otherwise this was a normal GET request
-    else:   
-        return render_template('main.html')
 @site.route("/ads.txt",methods=['GET', 'POST'])
 def ads():
     return send_file("ads.txt",as_attachment=False)
@@ -405,6 +378,6 @@ def page_not_found(e):
     return render_template('404.html'), 404
 @site.errorhandler(500)
 def page_not_found(e):
-    return render_template('hata.html'), 500
+    return render_template('hata.html'), 500#Returns error page.
 if __name__=="__main__":
     site.run()
