@@ -14,7 +14,7 @@ from bs4 import BeautifulSoup as bs
 import requests as r
 from os.path import isfile
 from dotenv import load_dotenv
-
+from werkzeug.utils import secure_filename
 load_dotenv("site.env")
 key=os.getenv("key")
 
@@ -98,21 +98,23 @@ def indir(link,komut,quality):
         for i in test_m:
             test.append(i)
         dw=None
+        status=os.popen("curl -I {}/DASH_audio.mp4".format(link)).read()
+        print(status)
+        if status.startswith("HTTP/2 403")==False and status.startswith("HTTP/1.1 403")==False and status.startswith("HTTP/1 403")==False and status.startswith("HTTP/0.9 403")==False:
+            has_audio=True
+        else:
+            has_audio=False
         for i in test:
             status=os.popen("curl -I {}/DASH_{}.mp4".format(link,i)).read()
             print(status)
             if status.startswith("HTTP/2 403")==False and status.startswith("HTTP/1.1 403")==False and status.startswith("HTTP/1 403")==False and status.startswith("HTTP/0.9 403")==False:
                 if has_audio==True:
-                    status=os.popen("curl -I {}/DASH_audio.mp4".format(link)).read()
-                    if status.startswith("HTTP/2 403")==False and status.startswith("HTTP/1.1 403")==False and status.startswith("HTTP/1 403")==False and status.startswith("HTTP/0.9 403")==False:
-                        has_audio=True
-                    else:
-                        has_audio=False
                     print("{}/DASH_{}.mp4".format(link,i))
                     #Create random strings to rename the files.
                     dw = ''.join(random.choices(string.ascii_letters+string.digits, k = uz))    
                     au = ''.join(random.choices(string.ascii_letters+string.digits, k = uz))
                     çk = ''.join(random.choices(string.ascii_letters+string.digits, k = uz))
+                    çk=secure_filename(çk)
                     if has_audio==True:
                         s("curl {}/DASH_{}.mp4 -o files/{}.mp4".format(link,i,dw))
                         s("curl {}/DASH_audio.mp4 -o files/{}.mp4".format(link,au))
@@ -164,8 +166,12 @@ def indirt(link,komut,quality,title):
     title=title.replace("<","")
     title=title.replace(">","")
     title=title.replace("?","")
-
+    title=title.replace("ü","u")
+    title=title.replace("ö","o")
+    title=title.replace("ğ","g")
+    title=title.replace("ç","c")
     title=deEmojify(title)
+    title=secure_filename(title)
 
 
     try:
@@ -227,16 +233,17 @@ def indirt(link,komut,quality,title):
             for i in test_m:
                 test.append(i)
             dw=None
+            status=os.popen("curl -I {}/DASH_audio.mp4".format(link)).read()
+            print(status)
+            if status.startswith("HTTP/2 403")==False and status.startswith("HTTP/1.1 403")==False and status.startswith("HTTP/1 403")==False and status.startswith("HTTP/0.9 403")==False:
+                has_audio=True
+            else:
+                has_audio=False
             for i in test:
                 status=os.popen("curl -I {}/DASH_{}.mp4".format(link,i)).read()
                 print(status)
                 if status.startswith("HTTP/2 403")==False and status.startswith("HTTP/1.1 403")==False and status.startswith("HTTP/1 403")==False and status.startswith("HTTP/0.9 403")==False:
                     if has_audio==True:
-                        status=os.popen("curl -I {}/DASH_audio.mp4".format(link)).read()
-                        if status.startswith("HTTP/2 403")==False and status.startswith("HTTP/1.1 403")==False and status.startswith("HTTP/1 403")==False and status.startswith("HTTP/0.9 403")==False:
-                            has_audio=True
-                        else:
-                            has_audio=False
                         print("{}/DASH_{}.mp4".format(link,i))
                         dw = ''.join(random.choices(string.ascii_letters+string.digits, k = uz))    
                         au = ''.join(random.choices(string.ascii_letters+string.digits, k = uz))
