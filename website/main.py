@@ -17,7 +17,7 @@ from dotenv import load_dotenv
 from werkzeug.utils import secure_filename
 load_dotenv("site.env")
 key=os.getenv("key")
-
+#TODO:Rename #5 the downloaded file with the id to prevent issues with same titles in 2 diffrent posts.
 fernet = Fernet(key)
 site=Flask(__name__)
 def deEmojify(text):
