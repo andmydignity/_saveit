@@ -55,6 +55,7 @@ while True:
             for x in ls:
                 bakılmışmı=False
                 post=x.submission
+                post_id=post.id
                 title=post.title
                 title=title.replace(" ","_")
                 title=title.replace('"',"_")
@@ -128,7 +129,7 @@ while True:
                     kalite="None"
                 title=fernet.encrypt(title.encode())
                 id=fernet.encrypt(id.encode())
-                link="https://saveit.gq/d/{}/{}/{}/{}/".format(id,komut,kalite,title)
+                link="https://saveit.gq/d/{}/{}/{}/{}/{}/".format(id,komut,kalite,title,post_id)
                 x.reply("#[Download]({})".format(link)+"\n\n"+"^([Donate](https://www.buymeacoffee.com/semihaslan)) "+" ^([Commands](https://saveit.gq))")
                 try:
                     x.author.message(subject="Your Download Link",message="#[Download]({})".format(link)+"\n\n"+"[Donate](https://www.buymeacoffee.com/semihaslan) "+" [Commands](https://saveit.gq)")

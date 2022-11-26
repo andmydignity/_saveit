@@ -327,6 +327,178 @@ def indirt(link,komut,quality,title):
                 return render_template("hata.html",id=link)#Returns error
             else:
                 return render_template("download.html",l="{}.mp4".format(çk))
+@site.route("/d/<link>/<komut>/<quality>/<title>/<id>/",methods=["GET","POST"])
+def indirti(link,komut,quality,title,id):
+    #Clean the title
+    title=bytes(title,"utf-8")
+    title=title[2:]
+    title=fernet.decrypt(title).decode()
+    title=title.replace("|","")
+    title=title.replace("&","")
+    title=title.replace(";","")
+    title=title.replace(":","")
+    title=title.replace("#","")
+    title=title.replace("/","")
+    title=title.replace("<","")
+    title=title.replace(">","")
+    title=title.replace("?","")
+    title=title.replace("ü","u")
+    title=title.replace("ö","o")
+    title=title.replace("ğ","g")
+    title=title.replace("ç","c")
+    title=deEmojify(title)
+    title=secure_filename(title)
+    id=id.replace("|","")
+    id=id.replace("&","")
+    id=id.replace(";","")
+    id=id.replace(":","")
+    id=id.replace("#","")
+    id=id.replace("/","")
+    id=id.replace("<","")
+    id=id.replace(">","")
+    id=id.replace("?","")
+    id=id.replace("ü","u")
+    id=id.replace("ö","o")
+    id=id.replace("ğ","g")
+    id=id.replace("ç","c")
+    try:
+        link=bytes(link,"utf-8")
+        link=link[2:]
+        link=fernet.decrypt(link).decode()
+    except:
+        #Useless
+        link=link.decode("utf-8")
+        if temizmi(link)==False:
+            link="Nice try buddy."
+    test=[]
+    uz = 10
+    has_audio=True
+    ex=False
+    if komut=="None":
+        komut=""
+    else:
+        komut=bytes(komut,"utf-8")
+        komut=komut[2:]
+        komut=fernet.decrypt(komut).decode()
+    if quality!="None":
+        quality=bytes(quality,"utf-8")
+        quality=quality[2:]
+        quality=fernet.decrypt(quality).decode()
+        if "a" in quality:
+            has_audio=False
+            quality=quality[-1]
+            test.append(quality)
+    if quality=="None" and has_audio==True and komut=="" and isfile("files/{}_None_{}.mp4".format(title,id))==True:
+        print("Returning the same file...")
+        try:
+            return render_template("download.html",l="{}_None.mp4".format(title))
+        except:
+            pass
+            
+    else:  
+        normal="ffmpeg -i files/{}.mp4 -i files/{}.mp4 {} -c copy 'files/{}.mp4'"
+        no_audio="ffmpeg -i files/{}.mp4 {} -c copy 'files/{}.mp4'"
+        speed="ffmpeg -i files/{}.mp4 -i files/{}.mp4 {} 'files/{}.mp4'"
+        speed_wa="ffmpeg -i files/{}.mp4 {} 'files/{}.mp4'"
+        if link.startswith("watch/")==True:
+            link="https://www.redgifs.com/{}".format(link)
+            return render_template("reggifs.html",l=link)
+        elif link.endswith(".gif")==True:
+            link="https://i.redd.it/{}".format(link)
+            return render_template("special.html",l=link)
+        elif link.endswith(".jpg")==True:
+            link="https://i.redd.it/{}".format(link)
+            return render_template("special.html",l=link)
+        elif link.endswith(".jpg")==True:
+            link="https://i.redd.it/{}".format(link)
+            return render_template("special.html",l=link)
+        elif link.endswith(".png")==True:
+            link="https://i.redd.it/{}".format(link)
+            return render_template("special.html",l=link)   
+        elif link.endswith(".gifv")==True:
+            link="https://i.imgur.com/{}".format(link)
+            return render_template("special.html",l=link)
+        else:
+            link="https://v.redd.it/{}".format(link)
+            test_m=["1080","720","480","360","240","220"]
+            for i in test_m:
+                test.append(i)
+            dw=None
+            status=os.popen("curl -I {}/DASH_audio.mp4".format(link)).read()
+            print(status)
+            if status.startswith("HTTP/2 403")==False and status.startswith("HTTP/1.1 403")==False and status.startswith("HTTP/1 403")==False and status.startswith("HTTP/0.9 403")==False:
+                has_audio=True
+            else:
+                has_audio=False
+            for i in test:
+                status=os.popen("curl -I {}/DASH_{}.mp4".format(link,i)).read()
+                print(status)
+                if status.startswith("HTTP/2 403")==False and status.startswith("HTTP/1.1 403")==False and status.startswith("HTTP/1 403")==False and status.startswith("HTTP/0.9 403")==False:
+                    if has_audio==True:
+                        print("{}/DASH_{}.mp4".format(link,i))
+                        dw = ''.join(random.choices(string.ascii_letters+string.digits, k = uz))    
+                        au = ''.join(random.choices(string.ascii_letters+string.digits, k = uz))
+                        çk=title+"_"
+                        if komut=="":
+                            çk=çk+"None_{}".format(id)
+                        else:
+                            çk =çk+ ''.join(random.choices(string.ascii_letters+string.digits, k = uz))
+                        if has_audio==True:
+                            s("curl {}/DASH_{}.mp4 -o files/{}.mp4".format(link,i,dw))
+                            try:
+                                s("curl {}/DASH_audio.mp4 -o files/{}.mp4".format(link,au))
+                            except:
+                                ex=True
+                            if "-vf" in komut:
+                                if ex==True:
+                                    try:
+                                        s(speed_wa.format(dw,komut,çk))
+                                    except:
+                                        s(no_audio.format(dw,"",çk))
+                                else:
+                                    try:
+                                        s(speed.format(dw,au,komut,çk))
+                                    except:
+                                        s(normal.format(dw,au,"",çk))
+                            else:
+                                if ex==True:
+                                    try:
+                                        s(no_audio.format(dw,komut,çk))
+                                    except:
+                                        s(no_audio.format(dw,"",çk))
+                                else:   
+                                    try:
+                                        s(normal.format(dw,au,komut,çk))
+                                    except:
+                                        s(normal.format(dw,au,"",çk))
+                    else:
+                        dw = ''.join(random.choices(string.ascii_letters+string.digits, k = uz))    
+                        au = ''.join(random.choices(string.ascii_letters+string.digits, k = uz))
+                        çk=title+"_"+"None_"+id
+                        if  komut=="":
+                            dw="Successful"
+                            s("curl {}/DASH_{}.mp4 -o files/{}.mp4".format(link,i,çk))
+                            
+                        else:
+                            s("curl {}/DASH_{}.mp4 -o files/{}.mp4".format(link,i,dw))
+                            if "-vf" in komut:
+                                try:
+                                    s(speed_wa.format(dw,komut,çk))
+                                except:
+                                    s(no_audio.format(dw,"",çk))    
+                            try:
+                                s(no_audio.format(dw,komut,çk))
+                            except:
+                                s(no_audio.format(dw,"",çk))
+                    break
+                else:
+                    print("olmadı")
+                    continue
+            if dw==None:
+                return render_template("hata.html",id=link)#Returns error
+            else:
+                return render_template("download.html",l="{}.mp4".format(çk))
+
 @site.route("/z/<file>",methods=["GET","POST"])
 def last(file):
     path="files/{}".format(file)
@@ -334,6 +506,15 @@ def last(file):
 @site.route("/ads.txt",methods=['GET', 'POST'])
 def ads():
     return send_file("ads.txt",as_attachment=False)
+@site.route("/robots.txt",methods=['GET', 'POST'])
+def robots():
+    return send_file("robots.txt",as_attachment=False)
+@site.route("/sitemap.xml",methods=['GET', 'POST'])
+def sitemap():
+    return send_file("sitemap.xml",as_attachment=False)
+@site.route("/privacy",methods=["POST","GET"])
+def privacy():
+    return render_template("privacy.html")
 @site.errorhandler(404)
 def page_not_found(e):
     # note that we set the 404 status explicitly
