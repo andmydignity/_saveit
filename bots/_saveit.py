@@ -1,4 +1,3 @@
-
 import praw
 import re
 from time import sleep
