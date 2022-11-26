@@ -391,7 +391,7 @@ def indirti(link,komut,quality,title,id):
     if quality=="None" and has_audio==True and komut=="" and isfile("files/{}_None_{}.mp4".format(title,id))==True:
         print("Returning the same file...")
         try:
-            return render_template("download.html",l="{}_None.mp4".format(title))
+            return render_template("download.html",l="{}_None_{}.mp4".format(title,id))
         except:
             pass
             
