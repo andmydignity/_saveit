@@ -2,3 +2,4 @@ python-dotenv
 gunicorn
 flask
 praw
+redgifdl
