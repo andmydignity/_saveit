@@ -1,4 +1,5 @@
 #IMPORTANT:ONLY WORKS IN LINUX!
+from redgifdl import download
 import re
 from crypt import methods
 from fileinput import filename
@@ -74,9 +75,14 @@ def indir(link,komut,quality):
     speed_wa="ffmpeg -i files/{}.mp4 {} 'files/{}.mp4'"
     #Check if it's a image/gif.
     if link.startswith("watch/")==True:
-        #TODO:Add #2 RedGIFS support
-        link="https://www.redgifs.com/{}".format(link)
-        return render_template("reggifs.html",l=link)
+        url="https://www.redgifs.com/{}".format(link)
+        fname=link.split("/",1)[1]
+        if isfile("files/{}.mp4".format(fname))==True:
+            print("Sending the same RedGIF.")
+            return render_template("download.html",l="{}.mp4".format(fname))
+        else:
+            download.url_file(redgifs_url=url, filename="{}.mp4".format(fname))
+        return render_template("redgifs.html",l=link)
     if link.endswith(".gif")==True:
         link="https://i.redd.it/{}".format(link)
         return render_template("special.html",l=link)
@@ -230,8 +236,13 @@ def indirt(link,komut,quality,title):
         speed="ffmpeg -i files/{}.mp4 -i files/{}.mp4 {} 'files/{}.mp4'"
         speed_wa="ffmpeg -i files/{}.mp4 {} 'files/{}.mp4'"
         if link.startswith("watch/")==True:
-            link="https://www.redgifs.com/{}".format(link)
-            return render_template("reggifs.html",l=link)
+            url="https://www.redgifs.com/{}".format(link)
+            fname=link.split("/",1)[1]
+            if isfile("files/{}.mp4".format(fname))==True:
+                print("Sending the same RedGIF.")
+                return render_template("download.html",l="{}.mp4".format(fname))
+            else:
+                download.url_file(redgifs_url=url, filename="{}.mp4".format(fname))
         elif link.endswith(".gif")==True:
             link="https://i.redd.it/{}".format(link)
             return render_template("special.html",l=link)
@@ -401,8 +412,13 @@ def indirti(link,komut,quality,title,id):
         speed="ffmpeg -i files/{}.mp4 -i files/{}.mp4 {} 'files/{}.mp4'"
         speed_wa="ffmpeg -i files/{}.mp4 {} 'files/{}.mp4'"
         if link.startswith("watch/")==True:
-            link="https://www.redgifs.com/{}".format(link)
-            return render_template("reggifs.html",l=link)
+            url="https://www.redgifs.com/{}".format(link)
+            fname=link.split("/",1)[1]
+            if isfile("files/{}.mp4".format(fname))==True:
+                print("Sending the same RedGIF.")
+                return render_template("download.html",l="{}.mp4".format(fname))
+            else:
+                download.url_file(redgifs_url=url, filename="{}.mp4".format(fname))
         elif link.endswith(".gif")==True:
             link="https://i.redd.it/{}".format(link)
             return render_template("special.html",l=link)
