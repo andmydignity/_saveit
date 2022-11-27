@@ -18,7 +18,6 @@ from dotenv import load_dotenv
 from werkzeug.utils import secure_filename
 load_dotenv("site.env")
 key=os.getenv("key")
-#TODO:Rename #5 the downloaded file with the id to prevent issues with same titles in 2 diffrent posts.
 fernet = Fernet(key)
 site=Flask(__name__)
 def deEmojify(text):
@@ -81,8 +80,8 @@ def indir(link,komut,quality):
             print("Sending the same RedGIF.")
             return render_template("download.html",l="{}.mp4".format(fname))
         else:
-            download.url_file(redgifs_url=url, filename="{}.mp4".format(fname))
-        return render_template("redgifs.html",l=link)
+            download.url_file(redgifs_url=url, filename="files/{}.mp4".format(fname))
+            return render_template("download.html",l="{}.mp4".format(fname))
     if link.endswith(".gif")==True:
         link="https://i.redd.it/{}".format(link)
         return render_template("special.html",l=link)
@@ -242,7 +241,8 @@ def indirt(link,komut,quality,title):
                 print("Sending the same RedGIF.")
                 return render_template("download.html",l="{}.mp4".format(fname))
             else:
-                download.url_file(redgifs_url=url, filename="{}.mp4".format(fname))
+                download.url_file(redgifs_url=url, filename="files/{}.mp4".format(fname))
+                return render_template("download.html",l="{}.mp4".format(fname))
         elif link.endswith(".gif")==True:
             link="https://i.redd.it/{}".format(link)
             return render_template("special.html",l=link)
@@ -418,7 +418,8 @@ def indirti(link,komut,quality,title,id):
                 print("Sending the same RedGIF.")
                 return render_template("download.html",l="{}.mp4".format(fname))
             else:
-                download.url_file(redgifs_url=url, filename="{}.mp4".format(fname))
+                download.url_file(redgifs_url=url, filename="files/{}.mp4".format(fname))
+                return render_template("download.html",l="{}.mp4".format(fname))
         elif link.endswith(".gif")==True:
             link="https://i.redd.it/{}".format(link)
             return render_template("special.html",l=link)
