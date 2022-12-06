@@ -68,6 +68,10 @@ def indir(link,komut,quality):
             has_audio=False
             quality=quality[-1]
             test.append(quality)
+    if komut!="":
+        number = int(filter(str.isdigit, komut))
+    else:
+        number=""
     normal="ffmpeg -i files/{}.mp4 -i files/{}.mp4 {} -c copy files/{}.mp4"
     no_audio="ffmpeg -i files/{}.mp4 {} -c copy files/{}.mp4"
     speed="ffmpeg -i files/{}.mp4 -i files/{}.mp4 {} files/{}.mp4"
@@ -76,12 +80,21 @@ def indir(link,komut,quality):
     if link.startswith("watch/")==True:
         url="https://www.redgifs.com/{}".format(link)
         fname=link.split("/",1)[1]
-        if isfile("files/{}.mp4".format(fname))==True:
-            print("Sending the same RedGIF.")
-            return render_template("download.html",l="{}.mp4".format(fname))
+        if komut=="":
+            if isfile("files/{}.mp4".format(fname))==True:
+                print("Sending the same RedGIF.")
+                return render_template("download.html",l="{}.mp4".format(fname))   
+            else:
+                download.url_file(redgifs_url=url, filename="files/{}.mp4".format(fname))
+                return render_template("download.html",l="{}.mp4".format(fname))
         else:
-            download.url_file(redgifs_url=url, filename="files/{}.mp4".format(fname))
-            return render_template("download.html",l="{}.mp4".format(fname))
+            if isfile("files/{}_{}.mp4".format(fname,number))==True:
+                print("Sending the same RedGIF.")
+                return render_template("download.html",l="{}_{}.mp4".format(fname,number))   
+            else:
+                download.url_file(redgifs_url=url, filename="files/{}_{}.mp4".format(fname,number))
+                return render_template("download.html",l="{}_{}.mp4".format(fname,number))
+
     if link.endswith(".gif")==True:
         link="https://i.redd.it/{}".format(link)
         return render_template("special.html",l=link)
@@ -222,12 +235,22 @@ def indirt(link,komut,quality,title):
             has_audio=False
             quality=quality[-1]
             test.append(quality)
+    if komut!="":
+        number = int(filter(str.isdigit, komut))
+    else:
+        number=""
     if quality=="None" and has_audio==True and komut=="" and isfile("files/{}_None.mp4".format(title))==True:
         print("Returning the same file...")
         try:
             return render_template("download.html",l="{}_None.mp4".format(title))
         except:
             pass
+    elif isfile("files/{}_{}.mp4".format(title,number))==True and number!="" :
+        print("Returning the same file...")
+        try:
+            return render_template("download.html",l="{}_{}.mp4".format(title,number))
+        except:
+            pass    
             
     else:  
         normal="ffmpeg -i files/{}.mp4 -i files/{}.mp4 {} -c copy 'files/{}.mp4'"
@@ -237,12 +260,20 @@ def indirt(link,komut,quality,title):
         if link.startswith("watch/")==True:
             url="https://www.redgifs.com/{}".format(link)
             fname=link.split("/",1)[1]
-            if isfile("files/{}.mp4".format(fname))==True:
-                print("Sending the same RedGIF.")
-                return render_template("download.html",l="{}.mp4".format(fname))
+            if komut=="":
+                if isfile("files/{}.mp4".format(fname))==True:
+                    print("Sending the same RedGIF.")
+                    return render_template("download.html",l="{}.mp4".format(fname))   
+                else:
+                    download.url_file(redgifs_url=url, filename="files/{}.mp4".format(fname))
+                    return render_template("download.html",l="{}.mp4".format(fname))
             else:
-                download.url_file(redgifs_url=url, filename="files/{}.mp4".format(fname))
-                return render_template("download.html",l="{}.mp4".format(fname))
+                if isfile("files/{}_{}.mp4".format(fname,number))==True:
+                    print("Sending the same RedGIF.")
+                    return render_template("download.html",l="{}_{}.mp4".format(fname,number))   
+                else:
+                    download.url_file(redgifs_url=url, filename="files/{}_{}.mp4".format(fname,number))
+                    return render_template("download.html",l="{}_{}.mp4".format(fname,number))
         elif link.endswith(".gif")==True:
             link="https://i.redd.it/{}".format(link)
             return render_template("special.html",l=link)
@@ -282,7 +313,7 @@ def indirt(link,komut,quality,title):
                         if komut=="":
                             çk=çk+"None"
                         else:
-                            çk =çk+ ''.join(random.choices(string.ascii_letters+string.digits, k = uz))
+                            çk =çk+'_'+number
                         if has_audio==True:
                             s("curl {}/DASH_{}.mp4 -o files/{}.mp4".format(link,i,dw))
                             try:
@@ -320,6 +351,7 @@ def indirt(link,komut,quality,title):
                             s("curl {}/DASH_{}.mp4 -o files/{}.mp4".format(link,i,çk))
                             
                         else:
+                            çk=çk+"_"+number
                             s("curl {}/DASH_{}.mp4 -o files/{}.mp4".format(link,i,dw))
                             if "-vf" in komut:
                                 try:
@@ -399,13 +431,22 @@ def indirti(link,komut,quality,title,id):
             has_audio=False
             quality=quality[-1]
             test.append(quality)
+    if komut!="":
+        number = int(filter(str.isdigit, komut))
+    else:
+        number=""
     if quality=="None" and has_audio==True and komut=="" and isfile("files/{}_None_{}.mp4".format(title,id))==True:
         print("Returning the same file...")
         try:
             return render_template("download.html",l="{}_None_{}.mp4".format(title,id))
         except:
             pass
-            
+    elif isfile("files/{}_{}_{}.mp4".format(title,number,id))==True and number!="" :
+        print("Returning the same file...")
+        try:
+            return render_template("download.html",l="{}_{}_{}_.mp4".format(title,number,id))
+        except:
+            pass        
     else:  
         normal="ffmpeg -i files/{}.mp4 -i files/{}.mp4 {} -c copy 'files/{}.mp4'"
         no_audio="ffmpeg -i files/{}.mp4 {} -c copy 'files/{}.mp4'"
@@ -414,12 +455,20 @@ def indirti(link,komut,quality,title,id):
         if link.startswith("watch/")==True:
             url="https://www.redgifs.com/{}".format(link)
             fname=link.split("/",1)[1]
-            if isfile("files/{}.mp4".format(fname))==True:
-                print("Sending the same RedGIF.")
-                return render_template("download.html",l="{}.mp4".format(fname))
+            if komut=="":
+                if isfile("files/{}.mp4".format(fname))==True:
+                    print("Sending the same RedGIF.")
+                    return render_template("download.html",l="{}.mp4".format(fname))   
+                else:
+                    download.url_file(redgifs_url=url, filename="files/{}.mp4".format(fname))
+                    return render_template("download.html",l="{}.mp4".format(fname))
             else:
-                download.url_file(redgifs_url=url, filename="files/{}.mp4".format(fname))
-                return render_template("download.html",l="{}.mp4".format(fname))
+                if isfile("files/{}_{}.mp4".format(fname,number))==True:
+                    print("Sending the same RedGIF.")
+                    return render_template("download.html",l="{}_{}.mp4".format(fname,number))   
+                else:
+                    download.url_file(redgifs_url=url, filename="files/{}_{}.mp4".format(fname,number))
+                    return render_template("download.html",l="{}_{}.mp4".format(fname,number))
         elif link.endswith(".gif")==True:
             link="https://i.redd.it/{}".format(link)
             return render_template("special.html",l=link)
@@ -459,7 +508,7 @@ def indirti(link,komut,quality,title,id):
                         if komut=="":
                             çk=çk+"None_{}".format(id)
                         else:
-                            çk =çk+ ''.join(random.choices(string.ascii_letters+string.digits, k = uz))
+                            çk =çk+"_"+number
                         if has_audio==True:
                             s("curl {}/DASH_{}.mp4 -o files/{}.mp4".format(link,i,dw))
                             try:
@@ -498,6 +547,7 @@ def indirti(link,komut,quality,title,id):
                             
                         else:
                             s("curl {}/DASH_{}.mp4 -o files/{}.mp4".format(link,i,dw))
+                            çk=title+"_"+number
                             if "-vf" in komut:
                                 try:
                                     s(speed_wa.format(dw,komut,çk))
