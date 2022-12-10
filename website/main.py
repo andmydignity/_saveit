@@ -236,7 +236,8 @@ def indirt(link,komut,quality,title):
             quality=quality[-1]
             test.append(quality)
     if komut!="":
-        number = int(filter(str.isdigit, komut))
+        number=int(''.join(i for i in komut if i.isdigit()))
+        number=str(number)
     else:
         number=""
     if quality=="None" and has_audio==True and komut=="" and isfile("files/{}_None.mp4".format(title))==True:
@@ -313,7 +314,7 @@ def indirt(link,komut,quality,title):
                         if komut=="":
                             çk=çk+"None"
                         else:
-                            çk =çk+'_'+number
+                            çk =çk+number
                         if has_audio==True:
                             s("curl {}/DASH_{}.mp4 -o files/{}.mp4".format(link,i,dw))
                             try:
@@ -432,7 +433,8 @@ def indirti(link,komut,quality,title,id):
             quality=quality[-1]
             test.append(quality)
     if komut!="":
-        number = int(filter(str.isdigit, komut))
+        number = int(''.join(i for i in komut if i.isdigit()))
+        number=str(number)
     else:
         number=""
     if quality=="None" and has_audio==True and komut=="" and isfile("files/{}_None_{}.mp4".format(title,id))==True:
@@ -444,7 +446,7 @@ def indirti(link,komut,quality,title,id):
     elif isfile("files/{}_{}_{}.mp4".format(title,number,id))==True and number!="" :
         print("Returning the same file...")
         try:
-            return render_template("download.html",l="{}_{}_{}_.mp4".format(title,number,id))
+            return render_template("download.html",l="{}_{}_{}.mp4".format(title,number,id))
         except:
             pass        
     else:  
@@ -508,7 +510,7 @@ def indirti(link,komut,quality,title,id):
                         if komut=="":
                             çk=çk+"None_{}".format(id)
                         else:
-                            çk =çk+"_"+number
+                            çk =çk+number+"_"+str(id)
                         if has_audio==True:
                             s("curl {}/DASH_{}.mp4 -o files/{}.mp4".format(link,i,dw))
                             try:
