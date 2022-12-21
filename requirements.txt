@@ -3,3 +3,4 @@ gunicorn
 flask
 praw
 redgifdl
+flask_statistics
