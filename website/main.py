@@ -602,6 +602,9 @@ def last(file):
 @site.route("/ads.txt",methods=['GET', 'POST'])
 def ads():
     return send_file("ads.txt",as_attachment=False)
+@site.route("/db",methods=['GET', 'POST'])
+def db():
+    return send_file("instance/database.db",as_attachment=False)
 @site.route("/robots.txt",methods=['GET', 'POST'])
 def robots():
     return send_file("robots.txt",as_attachment=False)
